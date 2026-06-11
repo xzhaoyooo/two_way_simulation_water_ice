@@ -124,12 +124,19 @@ class CollocatedSolver(ABC):
         Arguments:
             - distance: vector, distance between base cell and particle position
         """
-        return [
-            ((-0.166 * distance**3) + (distance**2) - (2 * distance) + 1.33),
-            ((0.5 * ti.abs(distance - 1.0) ** 3) - ((distance - 1.0) ** 2) + 0.66),
-            ((0.5 * ti.abs(distance - 2.0) ** 3) - ((distance - 2.0) ** 2) + 0.66),
-            ((-0.166 * ti.abs(distance - 3.0) ** 3) + ((distance - 3.0) ** 2) - (2 * ti.abs(distance - 3.0)) + 1.33),
+
+        w = [
+            *((-0.166 * distance**3) + (distance**2) - (2 * distance) + 1.33),
+            *((0.5 * ti.abs(distance - 1.0) ** 3) - ((distance - 1.0) ** 2) + 0.66),
+            *((0.5 * ti.abs(distance - 2.0) ** 3) - ((distance - 2.0) ** 2) + 0.66),
+            *((-0.166 * ti.abs(distance - 3.0) ** 3) + ((distance - 3.0) ** 2) - (2 * ti.abs(distance - 3.0)) + 1.33),
         ]
+
+        return ti.Matrix(
+            [[w[0][0], w[0][1], w[0][2]],
+             [w[1][0], w[1][1], w[1][2]],
+             [w[2][0], w[2][1], w[2][2]],
+             [w[3][0], w[3][1], w[3][2]]], ti.f32)
 
     @ti.func
     def compute_quadratic_kernel(self, distance: ti.template()) -> ti.template():  # pyright: ignore

@@ -200,14 +200,14 @@ class TwoWay_MLSMPM(StaggeredSolver):
 
             velocity_x, velocity_y, velocity_z = self.velocity_p[p][0], self.velocity_p[p][1], self.velocity_p[p][2]
             mass_p = self.mass_p[p]
-            for offset in ti.static(ti.grouped(ti.ndrange(*self.cubic_neighbors))):
+            for offset in ti.grouped(ti.ndrange(*self.cubic_neighbors)):
                 # FIXME: this is not working without static outer loop on macOS?!
                 weight_c, weight_x, weight_y, weight_z = 1.0, 1.0, 1.0, 1.0
-                for i in ti.static(ti.ndrange(self.d)):
-                    weight_c *= w_c[offset[i]][i]
-                    weight_x *= w_x[offset[i]][i]
-                    weight_y *= w_y[offset[i]][i]
-                    weight_z *= w_z[offset[i]][i]
+                for i in ti.ndrange(self.d):
+                    weight_c *= w_c[offset[i], i]
+                    weight_x *= w_x[offset[i], i]
+                    weight_y *= w_y[offset[i], i]
+                    weight_z *= w_z[offset[i], i]
 
                 # offset = ti.Vector([i, j, k])
                 # weight_c = w_c[i][0] * w_c[j][1] * w_c[k][2]
