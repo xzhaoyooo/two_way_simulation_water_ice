@@ -148,7 +148,12 @@ class CollocatedSolver(ABC):
         Arguments:
             - distance: vector, distance between base cell and particle position
         """
-        return [0.5 * (1.5 - distance) ** 2, 0.75 - (distance - 1) ** 2, 0.5 * (distance - 0.5) ** 2]
+        w = [0.5 * (1.5 - distance) ** 2, 0.75 - (distance - 1) ** 2, 0.5 * (distance - 0.5) ** 2]
+
+        return ti.Matrix(
+            [[w[0][0], w[0][1], w[0][2]],
+             [w[1][0], w[1][1], w[1][2]],
+             [w[2][0], w[2][1], w[2][2]]], ti.f32)
 
     def reset(self, configuration: Configuration):
         self.boundary_temperature[None] = configuration.boundary_temperature

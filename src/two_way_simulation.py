@@ -142,7 +142,7 @@ class TwoWay_MLSMPM(StaggeredSolver):
             # Clamp singular values to apply plasticity:
             U, sigma, V = ti.svd(self.FE_p[p])
             self.JE_p[p] = 1.0
-            for d in ti.static(ti.ndrange(self.d)):
+            for d in ti.ndrange(self.d):
                 singular_value = ti.f32(sigma[d, d])
                 clamped = ti.f32(sigma[d, d])
                 if self.phase_p[p] == Ice.Phase:
@@ -390,13 +390,13 @@ class TwoWay_MLSMPM(StaggeredSolver):
             b_x = ti.Vector.zero(ti.f32, self.d)
             b_y = ti.Vector.zero(ti.f32, self.d)
             b_z = ti.Vector.zero(ti.f32, self.d)
-            for offset in ti.static(ti.grouped(ti.ndrange(*self.quadratic_neighbors))):
+            for offset in ti.grouped(ti.ndrange(*self.quadratic_neighbors)):
                 weight_c, weight_x, weight_y, weight_z = 1.0, 1.0, 1.0, 1.0
-                for i in ti.static(ti.ndrange(self.d)):
-                    weight_c *= w_c[offset[i]][i]
-                    weight_x *= w_x[offset[i]][i]
-                    weight_y *= w_y[offset[i]][i]
-                    weight_z *= w_z[offset[i]][i]
+                for i in ti.ndrange(self.d):
+                    weight_c *= w_c[offset[i], i]
+                    weight_x *= w_x[offset[i], i]
+                    weight_y *= w_y[offset[i], i]
+                    weight_z *= w_z[offset[i], i]
 
                 temperature += weight_c * self.temperature_c[base_c + offset]
                 velocity_x = weight_x * self.velocity_x[base_x + offset]
