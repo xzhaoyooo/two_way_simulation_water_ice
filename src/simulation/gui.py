@@ -9,6 +9,8 @@ import taichi as ti
 
 @ti.data_oriented
 class GUI_Simulation(BaseSimulation):
+    frame_counter = 0
+
     def __init__(
         self,
         configurations: list[Configuration],
@@ -45,9 +47,17 @@ class GUI_Simulation(BaseSimulation):
         """Render the simulation."""
         indices = [0 if p == Water.Phase else 1 for p in self.solver.phase_p.to_numpy()]
         position = self.solver.position_p.to_numpy()
+        # position
         palette = [ColorHEX.Water, ColorHEX.Ice]
         radius = self.radius * 1000
         self.gui.circles(position, radius, palette=palette, palette_indices=indices)  # pyright: ignore
+
+        writer = ti.tools.PLYWriter(num_vertices=len(position))
+        writer.add_vertex_pos(position[:, 0], position[:, 1], position[:, 2])
+        writer.export_frame_ascii(self.frame_counter, "export.ply")
+        print('Exported PLY successfully!')
+        self.frame_counter += 1
+
         self.gui.show()
 
     def run(self) -> None:

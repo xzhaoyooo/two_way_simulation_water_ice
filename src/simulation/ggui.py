@@ -22,6 +22,7 @@ class DrawingOption:
 
 @ti.data_oriented
 class GGUI_Simulation(BaseSimulation):
+    frame_counter = 0
     def __init__(
         self,
         configurations: list[Configuration],
@@ -299,6 +300,14 @@ class GGUI_Simulation(BaseSimulation):
 
         if self.should_write_to_disk and not self.is_paused and not self.is_showing_settings:
             self.video_manager.write_frame(self.window.get_image_buffer_as_numpy())
+        
+        #n_pts = self.solver.n_particles.to_numpy().item()
+        #if n_pts > 0:
+        #    p_pos = self.solver.position_p.to_numpy()
+        #    writer = ti.tools.PLYWriter(n_pts)
+        #    writer.add_vertex_pos(p_pos[:, 0], p_pos[:, 1], p_pos[:, 2])
+        #    writer.export_frame_ascii(self.frame_counter, "export.ply")
+        #    self.frame_counter += 1
 
         self.window.show()
 
